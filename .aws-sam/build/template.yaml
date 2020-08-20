@@ -68,3 +68,9 @@ Outputs:
       Fn::GetAtt:
       - HelloWorldFunctionRole
       - Arn
+  RegisterUserFunctionIamRole:
+    Description: Implicit IAM Role created for Register User function
+    Value:
+      Fn::GetAtt:
+      - RegisterUserFunctionRole
+      - Arn

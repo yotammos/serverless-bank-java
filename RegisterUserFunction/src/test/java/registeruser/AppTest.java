@@ -5,7 +5,7 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -46,6 +46,7 @@ public class AppTest {
         App app = new App(dynamoDB);
         APIGatewayProxyRequestEvent request = new APIGatewayProxyRequestEvent().withBody(gson.toJson(userCredentials));
         APIGatewayProxyResponseEvent response = app.handleRequest(request, null);
-        assertEquals(response.getStatusCode().intValue(), 204);
+        assertTrue(response.getBody().contains("userId"));
+        assertEquals(response.getStatusCode().intValue(), 200);
     }
 }

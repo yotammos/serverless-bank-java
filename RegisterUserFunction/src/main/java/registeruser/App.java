@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import registeruser.model.UserCredentials;
 
+import java.util.UUID;
+
 /**
  * Handler for requests to Lambda function.
  */
@@ -42,12 +44,16 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             UserCredentials userCredentials = gson.fromJson(requestBody, UserCredentials.class);
             Table table = dynamoDB.getTable("users");
 
+
             logger.info("Trying to add new user");
+            String userId = UUID.randomUUID().toString();
             PutItemOutcome outcome = table.putItem(new Item()
-                    .withPrimaryKey("email", userCredentials.getEmail(),
-                            "password", userCredentials.getPassword()));
+                    .withPrimaryKey("email", userCredentials.getEmail())
+                    .with("password", userCredentials.getPassword())
+                    .with("userId", userId)
+            );
             logger.info("successfully added user, outcome = " + outcome);
-            return new APIGatewayProxyResponseEvent().withStatusCode(204);
+            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("{ \"userId\": \"" + userId + "\" }");
         } catch (JsonSyntaxException exception) {
             logger.warn("failed parsing user credentials");
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("failed parsing user credentials");

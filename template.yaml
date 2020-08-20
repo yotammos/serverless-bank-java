@@ -63,3 +63,6 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
+  RegisterUserFunctionIamRole:
+    Description: "Implicit IAM Role created for Register User function"
+    Value: !GetAtt RegisterUserFunctionRole.Arn
