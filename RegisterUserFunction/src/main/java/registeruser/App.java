@@ -13,9 +13,11 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import registeruser.model.UserCredentials;
+import registeruser.model.UserId;
 
 import java.util.UUID;
 
@@ -51,15 +53,19 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
                     .withPrimaryKey("email", userCredentials.getEmail())
                     .with("password", userCredentials.getPassword())
                     .with("userId", userId)
+                    .with("balance", 0.0)
             );
             logger.info("successfully added user, outcome = " + outcome);
-            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("{ \"userId\": \"" + userId + "\" }");
+            return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_OK)
+                    .withBody(gson.toJson(new UserId(userId)));
         } catch (JsonSyntaxException exception) {
             logger.warn("failed parsing user credentials");
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("failed parsing user credentials");
+            return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST)
+                    .withBody("failed parsing user credentials");
         } catch (Exception exception) {
             logger.warn("failed adding user credentials, error = ", exception);
-            return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("failed adding user");
+            return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .withBody("failed adding user");
         }
     }
 }

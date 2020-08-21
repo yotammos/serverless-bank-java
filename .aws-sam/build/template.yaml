@@ -41,6 +41,22 @@ Resources:
           Properties:
             Path: /register
             Method: post
+  CheckBalanceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CheckBalanceFunction
+      Handler: checkbalance.App::handleRequest
+      Runtime: java11
+      MemorySize: 512
+      Environment:
+        Variables:
+          PARAM1: VALUE
+      Events:
+        RegisterUser:
+          Type: Api
+          Properties:
+            Path: /balance
+            Method: get
 Outputs:
   HelloWorldApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
@@ -48,6 +64,10 @@ Outputs:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
   RegisterUserApi:
     Description: API Gateway endpoint URL for Prod stage for Register User function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/register/
+  CheckBalanceApi:
+    Description: API Gateway endpoint URL for Prod stage for Check Balance function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/register/
   HelloWorldFunction:
@@ -62,6 +82,12 @@ Outputs:
       Fn::GetAtt:
       - RegisterUserFunction
       - Arn
+  CheckBalanceFunction:
+    Description: Check Balance Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - CheckBalanceFunction
+      - Arn
   HelloWorldFunctionIamRole:
     Description: Implicit IAM Role created for Hello World function
     Value:
@@ -73,4 +99,10 @@ Outputs:
     Value:
       Fn::GetAtt:
       - RegisterUserFunctionRole
+      - Arn
+  CheckBalanceFunctionIamRole:
+    Description: Implicit IAM Role created for Check Balance function
+    Value:
+      Fn::GetAtt:
+      - CheckBalanceFunctionRole
       - Arn

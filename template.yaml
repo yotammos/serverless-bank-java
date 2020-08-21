@@ -43,6 +43,22 @@ Resources:
           Properties:
             Path: /register
             Method: post
+  CheckBalanceFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: CheckBalanceFunction
+      Handler: checkbalance.App::handleRequest
+      Runtime: java11
+      MemorySize: 512
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          PARAM1: VALUE
+      Events:
+        RegisterUser:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /balance
+            Method: get
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -54,15 +70,24 @@ Outputs:
   RegisterUserApi:
     Description: "API Gateway endpoint URL for Prod stage for Register User function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/register/"
+  CheckBalanceApi:
+    Description: "API Gateway endpoint URL for Prod stage for Check Balance function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/register/"
   HelloWorldFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt HelloWorldFunction.Arn
   RegisterUserFunction:
     Description: "Register User Lambda Function ARN"
     Value: !GetAtt RegisterUserFunction.Arn
+  CheckBalanceFunction:
+    Description: "Check Balance Lambda Function ARN"
+    Value: !GetAtt CheckBalanceFunction.Arn
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
   RegisterUserFunctionIamRole:
     Description: "Implicit IAM Role created for Register User function"
     Value: !GetAtt RegisterUserFunctionRole.Arn
+  CheckBalanceFunctionIamRole:
+    Description: "Implicit IAM Role created for Check Balance function"
+    Value: !GetAtt CheckBalanceFunctionRole.Arn
